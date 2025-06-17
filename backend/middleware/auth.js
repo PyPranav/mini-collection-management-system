@@ -14,7 +14,7 @@ const generateTokens = (payload) => {
     issuer: 'collection-management-system'
   });
 
-  const refreshToken = jwt.sign(payload, JWT_SECRET, {
+  const refreshToken = jwt.sign({...payload, refresh:true}, JWT_SECRET, {
     expiresIn: REFRESH_TOKEN_EXPIRES_IN,
     issuer: 'collection-management-system'
   });
@@ -66,6 +66,7 @@ const isAuthenticated = async (req, res, next) => {
 
     req.user = {
       email: decoded.email,
+      id: decoded.id
     };
     
     next();
@@ -82,6 +83,9 @@ const refreshTokens = (refreshToken)=>{
   try {
     const decoded = verifyToken(refreshToken);
 
+    if (!decoded || !decoded.refresh) {
+      throw new Error('Invalid refresh token');
+    }
     // Generate new tokens
     const tokenPayload = {
       email: decoded.email,
@@ -100,6 +104,7 @@ module.exports = {
   hashPassword,
   comparePassword,
   extractTokenFromHeader,
+  refreshTokens,
 
   // Middleware
   isAuthenticated,

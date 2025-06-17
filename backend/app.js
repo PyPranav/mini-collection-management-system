@@ -4,9 +4,12 @@ cors = require('cors');
 
 const app = express();
 const port = 5000;
-
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json()); // Middleware to parse JSON bodies
+
+// Import routes
+const userRoutes = require('./routes/users');
+app.use('/api/users', userRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
