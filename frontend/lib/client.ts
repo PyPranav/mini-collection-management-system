@@ -19,6 +19,7 @@ client.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     console.log({ error });
+    console.log(error?.config?.url);
     if (error.status === 401) {
       console.log("Unauthorized request, attempting to refresh token...");
       const response = await fetch(API_URL + "/users/refresh-tokens", {
@@ -42,7 +43,7 @@ client.interceptors.response.use(
         localStorage.removeItem("refreshToken");
       }
     }
-    return error.response;
+    throw error;
   }
 );
 

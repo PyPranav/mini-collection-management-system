@@ -28,6 +28,14 @@ export const registerUser = createAsyncThunk(
   }
 );
 
+export const getCurrentUser = createAsyncThunk(
+  "auth/getCurrentUser",
+  async () => {
+    const response = await client.get("/users/profile");
+    return response.data;
+  }
+);
+
 const initialState = {
   data: {
     id: null,
