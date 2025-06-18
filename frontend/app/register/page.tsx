@@ -67,15 +67,14 @@ const RegisterPage = () => {
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
     console.log("Form submitted with data:", data);
-    // Handle form submission logic here
     const res = await dispatch(registerUser(data));
 
     if (res.meta.requestStatus === "fulfilled") {
       console.log("Login successful:", res.payload);
       localStorage.setItem("accessToken", res.payload.accessToken);
       localStorage.setItem("refreshToken", res.payload.refreshToken);
-      router.push("/"); // Redirect to home page or any other page after successful registration
-      // Redirect or show success message
+      router.push("/");
+      // show success message
     } else {
       console.error("Login failed:", res);
       // Show error message to the user

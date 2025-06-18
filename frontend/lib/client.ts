@@ -20,7 +20,14 @@ client.interceptors.response.use(
   async (error: AxiosError) => {
     console.log({ error });
     console.log(error?.config?.url);
-    if (error.status === 401) {
+    if (
+      error.status === 401 &&
+      localStorage.getItem("refreshToken") &&
+      error.config &&
+      ![`/users/login`, `/users/register`, `/users/refresh-tokens`].includes(
+        error?.config?.url ?? ""
+      )
+    ) {
       console.log("Unauthorized request, attempting to refresh token...");
       const response = await fetch(API_URL + "/users/refresh-tokens", {
         method: "POST",

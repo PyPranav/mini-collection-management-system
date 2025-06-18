@@ -7,19 +7,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Button } from "@/components/ui/button";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { email } from "zod/v4";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useAppDispatch } from "@/store/hooks";
 import { loginUser } from "@/store/slices/authSlice";
-import { Loader2 } from "lucide-react";
 import LoaderButton from "@/components/custom/LoaderButton";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -42,13 +40,16 @@ const LoginPage = () => {
     console.log("Form submitted with data:", data);
 
     const res = await dispatch(loginUser(data));
+    console.log("Login response:", res);
     if (res.meta.requestStatus === "fulfilled") {
       console.log("Login successful:", res.payload);
       localStorage.setItem("accessToken", res.payload.accessToken);
       localStorage.setItem("refreshToken", res.payload.refreshToken);
+      toast.success("Login successful!");
       router.push("/");
     } else {
-      console.error("Login failed:", res);
+      console.error("Login failed:");
+      toast.error("Login failed. Please check your credentials.");
     }
   };
 

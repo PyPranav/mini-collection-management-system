@@ -51,17 +51,23 @@ const authSlice = createSlice({
     logout: (state) => (state = initialState),
   },
   extraReducers: (builder) => {
-    builder
-      .addCase(loginUser.pending, (state) => {
-        state.status = "pending";
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.data = action.payload;
-      })
-      .addCase(loginUser.rejected, (state) => {
-        state.status = "failed";
-      });
+    // Generic handlers for all auth actions
+    const authActions = [loginUser, registerUser, getCurrentUser];
+
+    authActions.forEach((action) => {
+      builder
+        .addCase(action.pending, (state) => {
+          state.status = "pending";
+        })
+        .addCase(action.fulfilled, (state, action) => {
+          state.status = "succeeded";
+          state.data.email = action.payload.email;
+          state.data.id = action.payload.id;
+        })
+        .addCase(action.rejected, (state) => {
+          state.status = "failed";
+        });
+    });
   },
 });
 

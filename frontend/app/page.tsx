@@ -10,14 +10,22 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import Image from "next/image";
 import { useEffect } from "react";
 import { client } from "@/lib/client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { data, status } = useAppSelector((state) => state.auth);
 
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   useEffect(() => {
-    dispatch(getCurrentUser());
+    dispatch(getCurrentUser()).then((res) => {
+      if (res.meta.requestStatus !== "fulfilled") {
+        toast.error("User not logged in");
+        router.push("/login");
+      }
+    });
   }, []);
 
   return (
@@ -43,14 +51,7 @@ export default function Home() {
       </button>
       <button
         onClick={() => {
-          client
-            .get("/users/profile")
-            .then((res) => {
-              console.log(res.data);
-            })
-            .catch((error) => {
-              console.error("Error fetching profile:", error);
-            });
+          dispatch(getCurrentUser());
         }}
       >
         profile
