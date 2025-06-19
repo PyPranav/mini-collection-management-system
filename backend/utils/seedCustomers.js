@@ -39,11 +39,11 @@ const randomEmail = (name) => {
 
 const randomPhone = () => {
   return (
-    "+1-" +
+    "+1" +
     Math.floor(100 + Math.random() * 900) +
-    "-" +
+    "" +
     Math.floor(100 + Math.random() * 900) +
-    "-" +
+    "" +
     Math.floor(1000 + Math.random() * 9000)
   );
 };
