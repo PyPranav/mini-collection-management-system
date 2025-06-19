@@ -42,7 +42,6 @@ const getDetailsForPayment = async (req, res) => {
   if (!customer) {
     return res.status(404).json({ message: "Customer not found" });
   }
-  console.log("customer", customer);
   res.status(200).json({ name: customer.name, outstanding_amount: customer.outstanding_amount, due_date: customer.due_date, email: customer.contact_info.email });
 }
 
@@ -52,7 +51,6 @@ const createCustomer = async (req, res) => {
   customerData.due_date = customerData.due_date || null;
   customerData.payment_status = customerData.payment_status || "paid";
 
-  console.log("!@!!!!", customerData);
 
   // Validate customer input
   const { isValid, errors } = validateCustomer(customerData);

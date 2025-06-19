@@ -50,9 +50,7 @@ export const createCustomer = createAsyncThunk(
     payment_status: string;
     phone: string;
   }) => {
-    console.log({
-      data,
-    });
+
     const response = await client.post("/customers", {
       ...data,
       contact_info: {
@@ -260,11 +258,9 @@ const customerSlice = createSlice({
         state.error = null;
       })
       .addCase(getCustomersWithCurrentFilters.fulfilled, (state, action) => {
-        console.log("API Response:", action.payload);
         state.loading = false;
         state.customers = action.payload.data.hits || [];
         state.pagination = action.payload.pagination;
-        console.log("Updated pagination:", state.pagination);
         state.error = null;
       })
       .addCase(getCustomersWithCurrentFilters.rejected, (state, action) => {
@@ -278,7 +274,6 @@ const customerSlice = createSlice({
       .addCase(deleteCustomer.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        console.log("action.payload", action.payload, state.customers)
         state.customers = state.customers.filter((customer) => customer._id !== action.payload.id);
       })
       .addCase(deleteCustomer.rejected, (state, action) => {

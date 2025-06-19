@@ -3,7 +3,6 @@ const { broadcastNotification } = require("../socket");
 
 const createNotificaiton = async (type, title, message, notification) => {
   try {
-    console.log("creating notification", type, title, message, notification);
     broadcastNotification(notification ?? title);
     const noti = await createDoc("notifications", {
       type,

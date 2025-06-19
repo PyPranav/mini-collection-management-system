@@ -37,12 +37,9 @@ const LoginPage = () => {
   });
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log("Form submitted with data:", data);
 
     const res = await dispatch(loginUser(data));
-    console.log("Login response:", res);
     if (res.meta.requestStatus === "fulfilled") {
-      console.log("Login successful:", res.payload);
       localStorage.setItem("accessToken", res.payload.accessToken);
       localStorage.setItem("refreshToken", res.payload.refreshToken);
       toast.success("Login successful!");

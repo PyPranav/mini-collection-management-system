@@ -83,7 +83,6 @@ export default function AddCustomerModal({
         due_date: editData.due_date ? new Date(editData.due_date) : undefined,
         payment_status: editData.payment_status,
       })
-      console.log("editData", editData)
     }
   }, [editData]);
 
@@ -126,7 +125,6 @@ export default function AddCustomerModal({
         payment_status: data.payment_status,
       };
 
-      console.log({ customerData });
       let res 
       if (editData) {
         res = await dispatch(updateCustomer({...customerData, id: editData.id}) as any);
@@ -142,7 +140,6 @@ export default function AddCustomerModal({
           onAddComplete();
         }, 1000);
       } else {
-        console.log(res);
         toast.error(
           "Failed to add customer. Please try again." + res.error.message
         );

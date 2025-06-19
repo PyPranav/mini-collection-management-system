@@ -18,13 +18,7 @@ export default function CustomerPagination({
   loading,
   onPageChange,
 }: CustomerPaginationProps) {
-  // Debug logging
-  console.log("Pagination Debug:", {
-    pagination,
-    filters,
-    currentPage: filters.page,
-    pageLimit: filters.limit,
-  });
+
 
   // Ensure we have valid values with defaults
   const currentPage = filters.page || 1;

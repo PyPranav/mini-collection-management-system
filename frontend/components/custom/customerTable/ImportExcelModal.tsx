@@ -150,12 +150,7 @@ export default function ImportExcelModal({
           } failed to update. Check the details below.`
         );
 
-        // Optionally log detailed errors to console or show in UI
-        if (result.errors && result.errors.length > 0) {
-          console.log("Upload errors:", result.errors);
-          // You could also set these errors to state to display in the UI
-          // setUploadErrors(result.errors);
-        }
+
       }
 
       // If no customers were updated at all
@@ -187,11 +182,7 @@ export default function ImportExcelModal({
         );
       }
 
-      // Optionally show detailed errors if available
-      if (error.errors && error.errors.length > 0) {
-        console.log("Detailed errors:", error.errors);
-        // You could display these errors in a modal or expandable section
-      }
+
     } finally {
       setUploading(false);
       setUploadProgress(0);

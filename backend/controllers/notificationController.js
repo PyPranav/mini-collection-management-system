@@ -89,7 +89,6 @@ const markAllNotificationsAsRead = async (req, res) => {
 const getNotifications = async (req, res) => {
   try {
     const { id: userId } = req.user;
-    console.log("userId", userId)
     const notifications = await searchDocs("notifications", {
       query: {
         bool: {
@@ -99,11 +98,9 @@ const getNotifications = async (req, res) => {
       sort: [{ created_at: { order: "desc" } }],
       size: 100,
     });
-    // console.log("notifications", notifications.hits.hits);
 
     const formattedNotifications = notifications.hits.hits.map((hit) => {
       const n = hit._source;
-      console.log(n.read_by_user_ids)
       return {
         id: hit._id || n.id,
         title: n.title,
@@ -112,7 +109,6 @@ const getNotifications = async (req, res) => {
         created_at: n.created_at,
       };
     });
-    // console.log("formattedNotifications", formattedNotifications);
     res.status(200).json(formattedNotifications);
   } catch (error) {
     console.error("Error getting notifications:", error);

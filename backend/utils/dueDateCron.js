@@ -10,7 +10,6 @@ function getYesterdayDateString() {
   const yyyy = yesterday.getFullYear();
   const mm = String(yesterday.getMonth() + 1).padStart(2, '0');
   const dd = String(yesterday.getDate()).padStart(2, '0');
-  console.log("yesterdayStr", `${yyyy}-${mm}-${dd}`);
   return `${yyyy}-${mm}-${dd}`;
 }
 
