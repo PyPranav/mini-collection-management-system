@@ -13,6 +13,39 @@ const allowedUpdateFields = [
   "payments",
 ];
 
+const makePayment = async (req, res) => {
+  const { customerId } = req.body;
+  const customer = (await searchDocs("customers", { query: { term: { _id: customerId } } })).hits.hits[0]._source;
+  if (!customer) {
+    return res.status(404).json({ message: "Customer not found" });
+  }
+  customer.outstanding_amount = 0;
+  customer.payment_status = "paid";
+  customer.due_date = null;
+  const updatedCustomer = await updateDoc("customers", customerId, customer);
+  if (!updatedCustomer) {
+    return res.status(500).json({ message: "Error updating customer" });
+  }
+  createNotificaiton(
+    "paymentMade",
+    "Payment made successfully",
+    `A payment was made by ${customer.name}`,
+    "New payment received"
+  );
+  res.status(200).json({ message: "Payment made successfully" });
+}
+const getDetailsForPayment = async (req, res) => {
+  const id = req.params.id;
+  const customer = (await searchDocs("customers", { query: { term: { _id: id } } })).hits.hits[0]._source;
+
+
+  if (!customer) {
+    return res.status(404).json({ message: "Customer not found" });
+  }
+  console.log("customer", customer);
+  res.status(200).json({ name: customer.name, outstanding_amount: customer.outstanding_amount, due_date: customer.due_date, email: customer.contact_info.email });
+}
+
 const createCustomer = async (req, res) => {
   const customerData = req.body;
   customerData.outstanding_amount = customerData.outstanding_amount || 0;
@@ -79,6 +112,12 @@ const updateCustomer = async (req, res) => {
     return res.status(500).json({ message: "Error updating customer" });
   }
 
+  createNotificaiton(
+    "customerUpdated",
+    "Customer updated successfully",
+    `${customerData.name} was updated`
+  );
+
   res
     .status(200)
     .json({ message: "Customer updated successfully", updatedCustomer });
@@ -104,6 +143,11 @@ const deleteCustomer = async (req, res) => {
   // Delete the customer document in Elasticsearch
   try {
     await deleteDoc("customers", customerId);
+    createNotificaiton(
+      "customerDeleted",
+      "Customer deleted successfully",
+      `A customer was deleted from customers`
+    );
   } catch (error) {
     return res.status(500).json({ message: "Error deleting customer" });
   }
@@ -488,4 +532,6 @@ module.exports = {
   getCustomersWithPagination,
   bulkCustomerUpdateExcel,
   getSampleCustomerExcel,
+  makePayment,
+  getDetailsForPayment,
 };

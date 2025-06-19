@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -44,6 +44,7 @@ import LoaderButton from "@/components/custom/LoaderButton";
 import {
   createCustomer,
   getCustomersWithCurrentFilters,
+  updateCustomer,
 } from "@/store/slices/customerSlice";
 
 const formSchema = z.object({
@@ -63,11 +64,41 @@ const formSchema = z.object({
 
 export default function AddCustomerModal({
   onAddComplete,
+  editData,
 }: {
   onAddComplete: () => void;
+  editData?: any;
 }) {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (editData) {
+      setOpen(true)
+      form.reset({
+        name: editData.name,
+        email: editData.contact_info.email,
+        phone: editData.contact_info.phone,
+        outstanding_amount: `${editData.outstanding_amount}`,
+        due_date: editData.due_date ? new Date(editData.due_date) : undefined,
+        payment_status: editData.payment_status,
+      })
+      console.log("editData", editData)
+    }
+  }, [editData]);
+
+  useEffect(() => {
+    if (!open) {
+      form.reset({
+        name: "",
+        email: "",
+        phone: "",
+        outstanding_amount: "",
+        due_date: undefined,
+        payment_status: "",
+      })
+    }
+  }, [open]);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -79,7 +110,7 @@ export default function AddCustomerModal({
       outstanding_amount: "",
       due_date: undefined,
       payment_status: "",
-    },
+    } ,
   });
 
   const handleSubmit = async (data: z.infer<typeof formSchema>) => {
@@ -90,14 +121,18 @@ export default function AddCustomerModal({
         phone: data.phone || undefined,
         outstanding_amount: Number.parseFloat(data.outstanding_amount),
         due_date: data.due_date
-          ? data.due_date.toISOString().split("T")[0]
+          ? format(data.due_date, "yyyy-MM-dd")
           : undefined,
         payment_status: data.payment_status,
       };
 
       console.log({ customerData });
-
-      const res = await dispatch(createCustomer(customerData) as any);
+      let res 
+      if (editData) {
+        res = await dispatch(updateCustomer({...customerData, id: editData.id}) as any);
+      } else {
+        res = await dispatch(createCustomer(customerData) as any);
+      }
 
       if (res.meta.requestStatus === "fulfilled") {
         // toast.success("Customer added successfully!");
@@ -116,6 +151,7 @@ export default function AddCustomerModal({
       toast.error("An error occurred while adding the customer.");
     }
   };
+  
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -277,7 +313,7 @@ export default function AddCustomerModal({
                 className="flex-1"
                 isLoading={form.formState.isSubmitting}
               >
-                Add Customer
+                {editData ? "Update Customer" : "Add Customer"}
               </LoaderButton>
             </div>
           </form>

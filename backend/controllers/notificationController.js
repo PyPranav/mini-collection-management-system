@@ -96,6 +96,7 @@ const getNotifications = async (req, res) => {
           must_not: [{ term: { read_by_user_ids: userId } }],
         },
       },
+      sort: [{ created_at: { order: "desc" } }],
       size: 100,
     });
     // console.log("notifications", notifications.hits.hits);

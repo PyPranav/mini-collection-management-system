@@ -148,16 +148,6 @@ const initializeDB = async () => {
         payment_status: { type: "keyword" }, //'pending', 'paid', 'overdue'
         created_at: { type: "date" },
         updated_at: { type: "date" },
-        payments: {
-          type: "nested",
-          properties: {
-            payment_id: { type: "keyword" },
-            amount: { type: "double" },
-            status: { type: "keyword" }, //'completed', 'pending'
-            transaction_id: { type: "keyword" },
-            created_at: { type: "date" },
-          },
-        },
       },
     });
   } else {

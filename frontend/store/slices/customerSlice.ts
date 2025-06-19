@@ -64,6 +64,41 @@ export const createCustomer = createAsyncThunk(
   }
 );
 
+export const deleteCustomer = createAsyncThunk(
+  "customer/deleteCustomer",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const response = await client.delete(`/customers/${id}`);
+      return {id, ...response.data};
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data?.message || "Failed to delete customer");
+    }
+  }
+);
+
+export const updateCustomer = createAsyncThunk(
+  "customer/updateCustomer",
+  async (data: {
+    id: string;
+    due_date: string;
+    email: string;
+    name: string;
+    outstanding_amount: number;
+    payment_status: string;
+    phone: string;
+  }, { rejectWithValue }) => {
+      const response = await client.put(`/customers/${data.id}`, {
+        ...data,
+        contact_info: {
+          email: data.email,
+          phone: data.phone,
+        },
+      });
+      return response.data;
+
+  }
+);
+
 export const bulkCreateCustomer = createAsyncThunk(
   "customer/bulkCreate",
   async (file: any, { rejectWithValue }) => {
@@ -233,6 +268,35 @@ const customerSlice = createSlice({
         state.error = null;
       })
       .addCase(getCustomersWithCurrentFilters.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(deleteCustomer.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteCustomer.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        console.log("action.payload", action.payload, state.customers)
+        state.customers = state.customers.filter((customer) => customer._id !== action.payload.id);
+      })
+      .addCase(deleteCustomer.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(updateCustomer.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateCustomer.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error = null;
+        state.customers = state.customers.map((customer) =>
+          customer._id === action.payload._id ? action.payload : customer
+        );
+      })
+      .addCase(updateCustomer.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

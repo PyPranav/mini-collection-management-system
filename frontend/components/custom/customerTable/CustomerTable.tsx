@@ -44,7 +44,7 @@ export default function CustomerTable() {
 
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-
+  const [editData, setEditData] = useState<any | null>(null);
   const fetchingRef = useRef(false);
 
   // Handle filter changes - memoize to prevent rerenders
@@ -81,7 +81,7 @@ export default function CustomerTable() {
   );
 
   // Get columns with sort handler - memoize to prevent rerenders
-  const customerColumns = useCustomerColumns({ onSort: handleSort });
+  const customerColumns = useCustomerColumns({ onSort: handleSort, setEditData });
   const columns = useMemo(() => customerColumns, [customerColumns]);
 
   const table = useReactTable({
@@ -154,11 +154,14 @@ export default function CustomerTable() {
               }
             />
             <AddCustomerModal
+              editData={editData}
               onAddComplete={() =>
+              {
                 dispatch(
                   getCustomersWithCurrentFilters(Date.now() as any) as any
                 )
-              }
+                setEditData(null)
+              }}
             />
             <NotificationsModal />
           </div>

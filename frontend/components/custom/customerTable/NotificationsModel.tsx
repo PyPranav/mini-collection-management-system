@@ -29,29 +29,14 @@ import { useAppSelector } from "@/store/hooks"
 
 const getNotificationIcon = (type:any) => {
   switch (type) {
-    case "success":
+    case "customerAdded":
       return <CheckCircle className="h-4 w-4 text-green-500" />
-    case "error":
+    case "customerDeleted":
       return <AlertCircle className="h-4 w-4 text-red-500" />
-    case "warning":
+    case "paymentReceived":
       return <AlertTriangle className="h-4 w-4 text-yellow-500" />
-    case "info":
     default:
       return <Info className="h-4 w-4 text-blue-500" />
-  }
-}
-
-const getNotificationBadgeVariant = (type: any) => {
-  switch (type) {
-    case "success":
-      return "default"
-    case "error":
-      return "destructive"
-    case "warning":
-      return "outline"
-    case "info":
-    default:
-      return "secondary"
   }
 }
 

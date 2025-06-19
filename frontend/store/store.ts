@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { authSlice } from "./slices/authSlice";
 import { customerSlice } from "./slices/customerSlice";
 import notificationsSlice from "./slices/notificationsSlice";
+import paymentSlice from "./slices/paymentSlice";
 
 export const makeStore = () => {
   return configureStore({
@@ -9,6 +10,7 @@ export const makeStore = () => {
       auth: authSlice.reducer,
       customer: customerSlice.reducer,
       notifications: notificationsSlice.reducer,
+      payment: paymentSlice.reducer,
     },
   });
 };

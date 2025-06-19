@@ -15,10 +15,11 @@ app.use(express.json()); // Middleware to parse JSON bodies
 const userRoutes = require("./routes/users");
 const customerRoutes = require("./routes/customers");
 const notificationRoutes = require("./routes/notifications");
+const paymentRoutes = require("./routes/payments");
 app.use("/api/users", userRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/notifications", notificationRoutes);
-
+app.use("/api/payments", paymentRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -32,9 +33,13 @@ app.get("/", (req, res) => {
   });
 });
 
+// Import and start the due date cron job
+
 const startServer = async () => {
   await connect(); // Connect to Elasticsearch
   await initializeDB(); // Initialize the database (create indices, etc.)
+  require("./utils/dueDateCron");
+
   console.log("Connected to Elasticsearch");
 
   setupSocket(server); // Setup socket.io

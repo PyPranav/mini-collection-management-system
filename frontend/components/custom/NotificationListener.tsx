@@ -19,6 +19,9 @@ const NotificationListener = () => {
 
     // Listen for all events
     const allEvents = (event: string, ...args: any[]) => {
+      if (!localStorage.getItem("accessToken")) {
+        return;
+      }
       toast.info(`${event}: ${JSON.stringify(args[0])}`);
       setTimeout(() => {
         dispatch(fetchNotifications( new Date().toISOString() as any) as any);

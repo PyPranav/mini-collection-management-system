@@ -15,14 +15,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { useAppDispatch } from "@/store/hooks";
+import { deleteCustomer } from "@/store/slices/customerSlice";
+import { toast } from "sonner";
 
 interface UseCustomerColumnsProps {
   onSort: (sortBy: string) => void;
+  setEditData: (data: any) => void;
 }
 
 export function useCustomerColumns({
   onSort,
+  setEditData,
 }: UseCustomerColumnsProps): ColumnDef<Customer>[] {
+  const dispatch = useAppDispatch();
   return useMemo(
     () => [
       {
@@ -180,12 +186,30 @@ export function useCustomerColumns({
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem
+                  onClick={() => {
+                    setEditData({...customer._source, id: customer._id})
+                  }}>
+                  Edit customer
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    dispatch(deleteCustomer(customer._id)).then((res) => {
+                      if (res.meta.requestStatus === "fulfilled") {
+                      } else {
+                        toast.error("Failed to delete customer")
+                      }
+                    })
+                  }}>
+                  Delete customer
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
                   onClick={() => navigator.clipboard.writeText(customer._id)}
                 >
                   Copy customer ID
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => navigator.clipboard.writeText(customer._id)}
+                  onClick={() => navigator.clipboard.writeText(`${window.location.origin}/payment/${customer._id}`)}
                 >
                   Copy payment url
                 </DropdownMenuItem>
@@ -198,3 +222,4 @@ export function useCustomerColumns({
     [onSort]
   );
 }
+
