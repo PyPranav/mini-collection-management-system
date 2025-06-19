@@ -1,41 +1,15 @@
 const {
-  isAuthenticated,
   hashPassword,
   comparePassword,
   generateTokens,
   refreshTokens,
   extractTokenFromHeader,
 } = require("../middleware/auth");
-const {
-  createIndex,
-  checkIndexExists,
-  createDoc,
-  deleteDoc,
-  updateDoc,
-  searchDocs,
-} = require("../dbconfig");
+const { createDoc, searchDocs } = require("../dbconfig");
 const { validateUser } = require("../utils/validation");
-
-// initialize the Elasticsearch index for users
-const initIndex = async () => {
-  if (!(await checkIndexExists("users"))) {
-    console.log("Creating users index...");
-    createIndex("users", {
-      properties: {
-        email: { type: "keyword" },
-        password: { type: "text", index: false },
-        created_at: { type: "date" },
-      },
-    });
-  } else {
-    console.log("Users index already exists.");
-  }
-};
-initIndex();
 
 // registerUser function to handle user registration
 const registerUser = async (req, res) => {
-  console.log("Registering user:", req.body);
   const { email, password } = req.body;
 
   // Validate user input
@@ -48,8 +22,8 @@ const registerUser = async (req, res) => {
   }
 
   // Check if the user already exists
-  const userExists = (await searchDocs("users", { term: { email } })).hits.hits;
-  console.log("User exists:", userExists);
+  const userExists = (await searchDocs("users", { query: { term: { email } } }))
+    .hits.hits;
   if (userExists.length > 0) {
     return res.status(400).json({ message: "Email already exists" });
   }
@@ -89,7 +63,8 @@ const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
   // search for the user by email
-  const user = (await searchDocs("users", { term: { email } })).hits.hits[0];
+  const user = (await searchDocs("users", { query: { term: { email } } })).hits
+    .hits[0];
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
@@ -104,7 +79,6 @@ const loginUser = async (req, res) => {
   }
 
   // Generate tokens for the user
-  console.log("User logged in:", { email, id: user._id });
   const tokens = generateTokens({ email, id: user._id });
 
   res
@@ -116,8 +90,8 @@ const getCurrentUser = async (req, res) => {
   const userId = req.user.id;
 
   // search for the user by ID
-  const user = (await searchDocs("users", { term: { _id: userId } })).hits
-    .hits[0];
+  const user = (await searchDocs("users", { query: { term: { _id: userId } } }))
+    .hits.hits[0];
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
@@ -125,7 +99,7 @@ const getCurrentUser = async (req, res) => {
   // Return the user data without the password
   delete user._source.password;
 
-  res.status(200).json({ user: user._source });
+  res.status(200).json({ email: user._source.email, id: user._id });
 };
 
 const refreshUserTokens = async (req, res) => {

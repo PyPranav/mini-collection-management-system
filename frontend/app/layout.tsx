@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import StoreProvider from "@/store/StoreProvider";
 import { Toaster } from "@/components/ui/sonner";
+import NotificationListener from "@/components/custom/NotificationListener";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,7 +17,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <StoreProvider>{children}</StoreProvider>
+        <StoreProvider>
+          {children}
+          <NotificationListener />
+        </StoreProvider>
         <Toaster position="top-right" />
       </body>
     </html>

@@ -21,7 +21,7 @@ import { toast } from "sonner";
 
 const formSchema = z.object({
   email: z.string().email(),
-  password: z.string(),
+  password: z.string().min(1, "Password is required"),
 });
 
 const LoginPage = () => {
@@ -46,7 +46,9 @@ const LoginPage = () => {
       localStorage.setItem("accessToken", res.payload.accessToken);
       localStorage.setItem("refreshToken", res.payload.refreshToken);
       toast.success("Login successful!");
-      router.push("/");
+      setTimeout(() => {
+        router.push("/");
+      }, 1000);
     } else {
       console.error("Login failed:");
       toast.error("Login failed. Please check your credentials.");

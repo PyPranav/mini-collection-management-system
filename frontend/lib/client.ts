@@ -50,7 +50,8 @@ client.interceptors.response.use(
         localStorage.removeItem("refreshToken");
       }
     }
-    throw error;
+    console.log(error?.response?.data);
+    throw error?.response?.data;
   }
 );
 

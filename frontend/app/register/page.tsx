@@ -19,6 +19,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { registerUser } from "@/store/slices/authSlice";
 import LoaderButton from "@/components/custom/LoaderButton";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const formSchema = z
   .object({
@@ -38,7 +39,7 @@ const formSchema = z
       .refine((val) => /[!@#$%^&*(),.?\":{}|<>]/.test(val), {
         message: "Password must contain at least one special character",
       }),
-    confirmPassword: z.string(),
+    confirmPassword: z.string().min(1, "Confirm you password"),
   })
   .superRefine(({ confirmPassword, password }, ctx) => {
     if (confirmPassword !== password) {
@@ -73,7 +74,10 @@ const RegisterPage = () => {
       console.log("Login successful:", res.payload);
       localStorage.setItem("accessToken", res.payload.accessToken);
       localStorage.setItem("refreshToken", res.payload.refreshToken);
-      router.push("/");
+      toast.success("Registration successful!");
+      setTimeout(() => {
+        router.push("/");
+      }, 1000);
       // show success message
     } else {
       console.error("Login failed:", res);
