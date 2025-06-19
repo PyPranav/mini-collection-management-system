@@ -14,6 +14,7 @@ The Mini Collection Management System is a full-stack web application for managi
 ---
 
 ## Architecture Diagram
+![Untitled-2025-05-13-1437](https://github.com/user-attachments/assets/097a3dce-86e0-419c-a59f-5ee3fdcb5270)
 
 ---
 
