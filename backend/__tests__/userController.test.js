@@ -63,7 +63,9 @@ describe("User Controller", () => {
         password: "password123",
       });
       expect(searchDocs).toHaveBeenCalledWith("users", {
-        term: { email: "test@example.com" },
+        query: {
+          term: { email: "test@example.com" },
+        }
       });
       expect(hashPassword).toHaveBeenCalledWith("password123");
       expect(createDoc).toHaveBeenCalledWith("users", expect.any(Object));
@@ -169,7 +171,9 @@ describe("User Controller", () => {
 
       // Assert
       expect(searchDocs).toHaveBeenCalledWith("users", {
-        term: { email: "user@example.com" },
+        query: {
+          term: { email: "user@example.com" },
+        }
       });
       expect(comparePassword).toHaveBeenCalledWith(
         "password123",
@@ -246,7 +250,9 @@ describe("User Controller", () => {
 
       // Assert
       expect(searchDocs).toHaveBeenCalledWith("users", {
-        term: { _id: "userId123" },
+        query: {
+          term: { _id: "userId123" },
+        }
       });
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
