@@ -15,13 +15,16 @@ const allowedUpdateFields = [
 
 const makePayment = async (req, res) => {
   const { customerId } = req.body;
-  const customer = (await searchDocs("customers", { query: { term: { _id: customerId } } })).hits.hits[0]._source;
+  const customer = (
+    await searchDocs("customers", { query: { term: { _id: customerId } } })
+  ).hits.hits[0]._source;
   if (!customer) {
     return res.status(404).json({ message: "Customer not found" });
   }
   customer.outstanding_amount = 0;
   customer.payment_status = "paid";
   customer.due_date = null;
+  customer.updated_at = new Date();
   const updatedCustomer = await updateDoc("customers", customerId, customer);
   if (!updatedCustomer) {
     return res.status(500).json({ message: "Error updating customer" });
@@ -33,24 +36,29 @@ const makePayment = async (req, res) => {
     "New payment received"
   );
   res.status(200).json({ message: "Payment made successfully" });
-}
+};
 const getDetailsForPayment = async (req, res) => {
   const id = req.params.id;
-  const customer = (await searchDocs("customers", { query: { term: { _id: id } } })).hits.hits[0]._source;
-
+  const customer = (
+    await searchDocs("customers", { query: { term: { _id: id } } })
+  ).hits.hits[0]._source;
 
   if (!customer) {
     return res.status(404).json({ message: "Customer not found" });
   }
-  res.status(200).json({ name: customer.name, outstanding_amount: customer.outstanding_amount, due_date: customer.due_date, email: customer.contact_info.email });
-}
+  res.status(200).json({
+    name: customer.name,
+    outstanding_amount: customer.outstanding_amount,
+    due_date: customer.due_date,
+    email: customer.contact_info.email,
+  });
+};
 
 const createCustomer = async (req, res) => {
   const customerData = req.body;
   customerData.outstanding_amount = customerData.outstanding_amount || 0;
   customerData.due_date = customerData.due_date || null;
   customerData.payment_status = customerData.payment_status || "paid";
-
 
   // Validate customer input
   const { isValid, errors } = validateCustomer(customerData);

@@ -64,10 +64,21 @@ const randomPaymentStatus = () => {
   return statuses[Math.floor(Math.random() * statuses.length)];
 };
 
+const randomDateTimeAroundNow = (days = 20) => {
+  const now = new Date();
+  const offsetDays = -Math.floor(Math.random() * days + 1); // Only negative offset, up to -days
+  const offsetMs = Math.floor(Math.random() * 24 * 60 * 60 * 1000); // random ms in a day
+  const date = new Date(
+    now.getTime() + offsetDays * 24 * 60 * 60 * 1000 + offsetMs
+  );
+  return date.toISOString();
+};
+
 const seedCustomers = async (createDoc, count = 75) => {
   const customers = [];
   for (let i = 0; i < count; i++) {
     const name = randomName();
+    const randDate = randomDateTimeAroundNow(10);
     const customer = {
       name,
       contact_info: {
@@ -77,8 +88,8 @@ const seedCustomers = async (createDoc, count = 75) => {
       outstanding_amount: randomOutstandingAmount(),
       due_date: randomDueDate(),
       payment_status: randomPaymentStatus(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      created_at: randDate,
+      updated_at: randDate,
     };
     customers.push(customer);
   }
