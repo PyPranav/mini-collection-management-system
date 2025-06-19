@@ -4,6 +4,8 @@ const { connect, initializeDB } = require("./dbconfig"); // Ensure dbconfig.js e
 cors = require("cors");
 const http = require("http");
 const { setupSocket } = require("./socket"); // Import socket setup
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./utils/swagger");
 
 const app = express();
 const port = 5000;
@@ -20,6 +22,10 @@ app.use("/api/users", userRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/payments", paymentRoutes);
+
+// Basic OpenAPI spec (expand later)
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
