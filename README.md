@@ -14,7 +14,7 @@ The Mini Collection Management System is a full-stack web application for managi
 ---
 
 ## Architecture Diagram
-
+![Untitled-2025-05-13-1437](https://github.com/user-attachments/assets/097a3dce-86e0-419c-a59f-5ee3fdcb5270)
 
 ---
 
@@ -40,6 +40,7 @@ docker-compose up -d
 ```
 
 This will start an Elasticsearch instance on port `9200`.
+Note: Dummy data with 75 customer record will be prefilled on first run.
 
 ### 3. Backend
 
