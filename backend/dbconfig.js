@@ -1,4 +1,5 @@
 const { Client } = require("@elastic/elasticsearch");
+const { seedCustomers } = require("./utils/seedCustomers");
 
 let client;
 
@@ -132,7 +133,7 @@ const initializeDB = async () => {
   // customer index
   if (!(await checkIndexExists("customers"))) {
     console.log("Creating customers index...");
-    createIndex("customers", {
+    await createIndex("customers", {
       properties: {
         name: {
           type: "text",
@@ -150,6 +151,7 @@ const initializeDB = async () => {
         updated_at: { type: "date" },
       },
     });
+    await seedCustomers(createDoc);
   } else {
     console.log("Customer index already exists.");
   }

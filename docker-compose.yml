@@ -1,5 +1,4 @@
 services:
-
   frontend:
     build: ./frontend
     ports:
@@ -7,7 +6,7 @@ services:
     depends_on:
       elasticsearch:
         condition: service_healthy
-  
+
   backend:
     build: ./backend
     ports:
@@ -27,9 +26,17 @@ services:
     ports:
       - "9200:9200"
     volumes:
-      - esdata:/usr/share/elasticsearch/data
+      - esdata:/usr/share/elasticsearch/data2
     healthcheck:
-      test: ["CMD", "curl", "-u", "elastic:changeme", "-f", "http://localhost:9200/_cluster/health"]
+      test:
+        [
+          "CMD",
+          "curl",
+          "-u",
+          "elastic:changeme",
+          "-f",
+          "http://localhost:9200/_cluster/health",
+        ]
       interval: 10s
       timeout: 10s
       retries: 10
